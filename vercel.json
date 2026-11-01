@@ -14,6 +14,7 @@
   ],
   "env": {
     "MEDIVAULT_DB_PATH": "/tmp/medivault.db",
-    "MEDIVAULT_LOG_FILE": "/tmp/medivault.log"
+    "MEDIVAULT_LOG_FILE": "/tmp/medivault.log",
+    "MEDIVAULT_SEED_DEMO": "true"
   }
 }

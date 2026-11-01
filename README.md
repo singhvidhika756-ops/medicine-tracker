@@ -221,7 +221,8 @@ The original custom HTML/CSS/JavaScript interface is Vercel-ready:
 
 This publishes the original UI from `templates/` and `static/`, not the Streamlit UI.
 The Vercel demo uses a temporary SQLite file in `/tmp`; use a hosted PostgreSQL database
-for permanent online data.
+for permanent online data. Vercel is configured to seed the sample inventory when that
+temporary database is empty, so the public demo starts with example records.
 
 ### 2. Populate Sample Data (For Demo)
 If you want to immediately explore the system with realistic data:

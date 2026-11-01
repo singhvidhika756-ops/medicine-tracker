@@ -1,5 +1,7 @@
 """MediVault browser application."""
 
+import os
+
 from flask import Flask, jsonify, render_template, request
 
 from database.connection import DatabaseManager
@@ -13,6 +15,14 @@ from utils.backup import export_all_to_csv
 app = Flask(__name__)
 db = DatabaseManager()
 initialize_database(db)
+
+if os.environ.get("MEDIVAULT_SEED_DEMO", "false").lower() == "true":
+    existing = db.fetchone("SELECT COUNT(*) AS count FROM medicines")
+    if not existing or existing["count"] == 0:
+        from sample_data import seed_sample_data
+
+        seed_sample_data(db)
+
 medicine_service = MedicineService(db)
 inventory_service = InventoryService(db)
 expiry_service = ExpiryService(db)
