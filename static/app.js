@@ -1,4 +1,5 @@
 const state = { dashboard: null, medicines: [], batches: [], alerts: null, transactions: [], report: [] };
+const alertState = { enabled: localStorage.getItem('medivault_alerts_enabled') === 'true', lastFingerprint: localStorage.getItem('medivault_alert_fingerprint') || '' };
 const $ = (selector) => document.querySelector(selector);
 const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value || 0);
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
@@ -16,6 +17,47 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 2600);
 }
 
+function alertFingerprint(dashboard) {
+  return [dashboard.low_stock_medicines, dashboard.expired_batches, dashboard.expiring_7_days].join(':');
+}
+
+function playAlertSound() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  const context = new AudioContext();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.value = 740;
+  gain.gain.setValueAtTime(0.001, context.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.16, context.currentTime + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.55);
+  oscillator.connect(gain).connect(context.destination);
+  oscillator.start();
+  oscillator.stop(context.currentTime + 0.55);
+  oscillator.addEventListener('ended', () => context.close());
+}
+
+function notifyInventoryAlert(dashboard) {
+  if (!alertState.enabled || dashboard.low_stock_medicines <= 0) return;
+  const fingerprint = alertFingerprint(dashboard);
+  if (fingerprint === alertState.lastFingerprint) return;
+  alertState.lastFingerprint = fingerprint;
+  localStorage.setItem('medivault_alert_fingerprint', fingerprint);
+  playAlertSound();
+  showToast(`Low stock alert: ${dashboard.low_stock_medicines} medicine(s) need replenishment.`);
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('MediVault stock alert', { body: `${dashboard.low_stock_medicines} medicine(s) are below their stock threshold.` });
+  }
+}
+
+function updateAlertButton() {
+  const button = $('#alert-toggle');
+  if (!button) return;
+  button.textContent = alertState.enabled ? 'Alerts enabled' : 'Enable alerts';
+  button.classList.toggle('primary', alertState.enabled);
+}
+
 function table(headers, rows) {
   if (!rows.length) return '<div class="empty">Nothing to show here yet.</div>';
   return `<div class="table-wrap"><table><thead><tr>${headers.map((header) => `<th>${header}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
@@ -27,6 +69,7 @@ function renderDashboard() {
   const recent = d.recent_transactions || [];
   const categories = Object.entries(d.category_distribution || {});
   const maxCategory = Math.max(...categories.map(([, count]) => count), 1);
+  notifyInventoryAlert(d);
   $('#dashboard-view').innerHTML = `
     ${totalAlerts ? `<div class="alert-banner"><strong>${totalAlerts} items need attention: ${d.expired_batches} expired, ${d.expiring_7_days} expiring soon, and ${d.low_stock_medicines} below threshold.</strong><button class="button danger" data-go="alerts">Review alerts</button></div>` : ''}
     <div class="kpi-grid">
@@ -102,9 +145,18 @@ $('#medicine-form').addEventListener('submit', async (event) => {
 });
 $('#cancel-medicine').addEventListener('click', () => $('#medicine-dialog').close());
 $('#add-medicine-button').addEventListener('click', openMedicineDialog);
+$('#alert-toggle').addEventListener('click', async () => {
+  if ('Notification' in window && Notification.permission === 'default') await Notification.requestPermission();
+  alertState.enabled = true;
+  localStorage.setItem('medivault_alerts_enabled', 'true');
+  playAlertSound();
+  updateAlertButton();
+  showToast('Low-stock sound and browser alerts are enabled.');
+});
 $('#refresh-button').addEventListener('click', async () => { await loadAll(); showToast('Workspace refreshed'); });
 document.addEventListener('click', (event) => { const nav = event.target.closest('[data-view]'); if (nav) switchView(nav.dataset.view); const go = event.target.closest('[data-go]'); if (go) switchView(go.dataset.go); if (event.target.closest('[data-action="refresh"]')) loadAll(); });
 
 async function downloadReport() { const columns = ['medicine_name', 'batch_number', 'expiry_date', 'expiry_status', 'current_quantity', 'purchase_price', 'supplier']; const csv = [columns.join(','), ...state.report.map((row) => columns.map((column) => `"${String(row[column] ?? '').replaceAll('"', '""')}"`).join(','))].join('\n'); const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = 'medivault_inventory_report.csv'; link.click(); URL.revokeObjectURL(link.href); }
 
+updateAlertButton();
 loadAll().catch((error) => { $('#dashboard-view').innerHTML = `<div class="panel empty">Could not load MediVault: ${esc(error.message)}</div>`; });
