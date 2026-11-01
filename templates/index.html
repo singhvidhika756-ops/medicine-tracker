@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediVault | Inventory workspace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard"><span class="brand-mark">+</span><span>MediVault</span></a>
+      <p class="brand-note">Pharmacy inventory workspace</p>
+      <nav class="nav" aria-label="Primary navigation">
+        <button class="nav-item active" data-view="dashboard">Overview</button>
+        <button class="nav-item" data-view="medicines">Medicines</button>
+        <button class="nav-item" data-view="batches">Batches</button>
+        <button class="nav-item" data-view="alerts">Alerts</button>
+        <button class="nav-item" data-view="audit">Stock audit</button>
+        <button class="nav-item" data-view="reports">Reports</button>
+      </nav>
+      <div class="sidebar-footer"><span class="status-dot"></span>Local database connected</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Inventory control center</p>
+          <h1 id="page-title">Good morning, keep stock moving.</h1>
+        </div>
+        <div class="top-actions">
+          <button class="button secondary" id="refresh-button">Refresh</button>
+          <button class="button primary" id="add-medicine-button">Add medicine</button>
+        </div>
+      </header>
+
+      <section id="dashboard-view" class="view active-view"></section>
+      <section id="medicines-view" class="view"></section>
+      <section id="batches-view" class="view"></section>
+      <section id="alerts-view" class="view"></section>
+      <section id="audit-view" class="view"></section>
+      <section id="reports-view" class="view"></section>
+    </main>
+  </div>
+
+  <dialog id="medicine-dialog" class="dialog">
+    <form method="dialog" id="medicine-form">
+      <div class="dialog-heading"><div><p class="eyebrow">Catalog</p><h2>Add medicine</h2></div><button class="icon-button" value="cancel" aria-label="Close">x</button></div>
+      <div class="form-grid">
+        <label>Medicine name<input name="name" required placeholder="e.g. Paracetamol 500mg"></label>
+        <label>Generic name<input name="generic_name" placeholder="Active ingredient"></label>
+        <label>Category<select name="category"><option>General</option><option>Analgesic</option><option>Antibiotic</option><option>Antacid</option><option>Antiseptic</option><option>Cardiovascular</option><option>Diabetes</option><option>Respiratory</option><option>Vitamins & Supplements</option><option>Other</option></select></label>
+        <label>Unit type<select name="unit_type"><option>Tablet</option><option>Capsule</option><option>Syrup</option><option>Injection</option><option>Cream</option><option>Drops</option><option>Other</option></select></label>
+        <label>Manufacturer<input name="manufacturer" placeholder="Supplier or manufacturer"></label>
+        <label>Low-stock threshold<input name="min_stock_threshold" type="number" min="0" value="10"></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="button secondary" id="cancel-medicine">Cancel</button><button class="button primary" value="submit">Save medicine</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

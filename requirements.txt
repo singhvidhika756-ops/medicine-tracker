@@ -1,0 +1,17 @@
+# MediVault - Medicine Inventory & Expiry Management System
+# Core dependencies (all included with Python 3)
+# tkinter - GUI framework (included with Python)
+# sqlite3 - Database (included with Python)
+# datetime - Date handling (included with Python)
+# csv - CSV file operations (included with Python)
+# json - JSON operations (included with Python)
+# pathlib - Path operations (included with Python)
+# logging - Logging framework (included with Python)
+# unittest - Testing framework (included with Python)
+
+# Optional dependencies (uncomment to install)
+Flask>=3.1.0             # Browser-based inventory interface
+# Pillow>=10.0.0        # Image handling
+# matplotlib>=3.7.0     # Charts and graphs
+# tkcalendar>=1.6.1     # Calendar date picker widget
+# reportlab>=4.0.0      # PDF report generation
