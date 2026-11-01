@@ -17,6 +17,39 @@ from utils.backup import create_backup, export_all_to_csv
 
 st.set_page_config(page_title="MediVault | Inventory workspace", page_icon="💊", layout="wide")
 
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+    :root { --ink: #e7edf5; --muted: #9aa8bb; --navy: #0f172a; --panel: #1f2937; --line: #334155; --blue: #2f6feb; --teal: #24c7a5; --coral: #ff6b6b; }
+    html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+    .stApp { background: #111827; color: var(--ink); }
+    [data-testid="stSidebar"] { background: var(--navy); border-right: 1px solid #263449; }
+    [data-testid="stSidebar"] > div:first-child { padding-top: 1.6rem; }
+    [data-testid="stSidebar"] h1 { font-family: 'Space Grotesk', sans-serif; color: white; font-size: 1.45rem; }
+    [data-testid="stSidebar"] p { color: var(--muted); }
+    [data-testid="stSidebar"] [role="radiogroup"] { gap: .35rem; }
+    [data-testid="stSidebar"] [role="radio"] { border-radius: 6px; padding: .55rem .7rem; color: #b6c2d2; }
+    [data-testid="stSidebar"] [role="radio"]:hover { background: #1d3554; color: white; }
+    [data-testid="stSidebar"] [role="radio"][aria-checked="true"] { background: var(--blue); color: white; }
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; color: white; letter-spacing: 0; }
+    h1 { font-size: 2.1rem; }
+    h2 { font-size: 1.45rem; }
+    h3 { font-size: 1.05rem; }
+    [data-testid="stMetric"] { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--blue); padding: 1rem; border-radius: 2px; }
+    [data-testid="stMetricLabel"] { color: var(--muted); }
+    [data-testid="stMetricValue"] { color: white; font-family: 'Space Grotesk', sans-serif; }
+    [data-testid="stDataFrame"] { border: 1px solid var(--line); }
+    [data-testid="stExpander"] { background: var(--panel); border: 1px solid var(--line); }
+    .stButton > button, .stDownloadButton > button { border-radius: 4px; font-weight: 600; }
+    .stButton > button[kind="primary"] { background: var(--blue); border-color: var(--blue); }
+    [data-testid="stAlert"] { border-radius: 3px; }
+    [data-testid="stHeader"] { background: #111827; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 @st.cache_resource
 def get_services():
