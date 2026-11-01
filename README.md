@@ -201,14 +201,14 @@ cd d:\vidhu\MediVault
 python main.py
 ```
 
-### 1b. Run the browser interface
+### 1b. Run the Streamlit interface
 
-Install the web dependency and start the local server:
+Install the dependencies and start the Streamlit server:
 ```powershell
 py -3.14 -m pip install -r requirements.txt
-py -3.14 web_app.py
+py -3.14 -m streamlit run app.py
 ```
-Then open http://127.0.0.1:5000 in a browser. The browser interface uses the same
+Streamlit opens the application in a browser, normally at http://localhost:8501. The interface uses the same
 SQLite database and service layer as the desktop application.
 
 ### 2. Populate Sample Data (For Demo)
