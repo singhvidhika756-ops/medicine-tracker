@@ -73,7 +73,7 @@ def show_table(rows, columns=None):
     table = pd.DataFrame(rows)
     if columns:
         table = table[[column for column in columns if column in table.columns]]
-    st.dataframe(table, use_container_width=True, hide_index=True)
+    st.dataframe(table, width="stretch", hide_index=True)
 
 
 def dashboard_page():

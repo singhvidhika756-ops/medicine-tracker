@@ -16,4 +16,3 @@ reportlab>=4.0.0        # Project report PDF generation
 # Pillow>=10.0.0        # Image handling
 # matplotlib>=3.7.0     # Charts and graphs
 # tkcalendar>=1.6.1     # Calendar date picker widget
-# reportlab>=4.0.0      # PDF report generation
