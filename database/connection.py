@@ -7,6 +7,7 @@ querying the SQLite database with automatic foreign-key enforcement.
 
 import sqlite3
 import threading
+import os
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple
@@ -39,7 +40,8 @@ class DatabaseManager:
         Args:
             db_path: Database file path relative to the project root.
         """
-        self.db_path: Path = BASE_DIR / db_path
+        configured_path = os.environ.get("MEDIVAULT_DB_PATH")
+        self.db_path: Path = Path(configured_path) if configured_path else BASE_DIR / db_path
         # Ensure the parent directory exists (e.g. 'data/')
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         # Connection is created lazily by get_connection()

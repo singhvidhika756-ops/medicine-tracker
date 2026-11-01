@@ -211,6 +211,18 @@ py -3.14 -m streamlit run app.py
 Streamlit opens the application in a browser, normally at http://localhost:8501. The interface uses the same
 SQLite database and service layer as the desktop application.
 
+### 1c. Deploy the original Flask UI on Vercel
+
+The original custom HTML/CSS/JavaScript interface is Vercel-ready:
+1. Open https://vercel.com and sign in with GitHub.
+2. Click **Add New Project** and import `singhvidhika756-ops/medicine-tracker`.
+3. Keep the detected framework as **Other**.
+4. Deploy the project. Vercel uses `vercel.json` and `api/index.py` automatically.
+
+This publishes the original UI from `templates/` and `static/`, not the Streamlit UI.
+The Vercel demo uses a temporary SQLite file in `/tmp`; use a hosted PostgreSQL database
+for permanent online data.
+
 ### 2. Populate Sample Data (For Demo)
 If you want to immediately explore the system with realistic data:
 ```powershell

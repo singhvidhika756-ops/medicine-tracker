@@ -6,6 +6,7 @@ every important event (errors, info, debug) is recorded.
 """
 
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -25,7 +26,8 @@ def setup_logger(name: str = 'medivault',
     # Resolve the log file path relative to the project root
     # Project root is one level above the 'utils' package
     base_dir = Path(__file__).resolve().parent.parent
-    log_path = base_dir / log_file
+    configured_log = os.environ.get("MEDIVAULT_LOG_FILE")
+    log_path = Path(configured_log) if configured_log else base_dir / log_file
 
     # Make sure the directory for the log file exists
     log_path.parent.mkdir(parents=True, exist_ok=True)
