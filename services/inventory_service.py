@@ -117,17 +117,22 @@ class InventoryService:
             raise ValueError("Selling price cannot be negative.")
 
         with self.db.transaction() as conn:
-            cursor = conn.execute(
+            insert_query = (
                 """INSERT INTO batches
                    (medicine_id, batch_number, manufacturing_date, expiry_date,
                     purchase_date, quantity_received, current_quantity,
                     purchase_price, selling_price, supplier, notes)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            )
+            if self.db._postgres:
+                insert_query += " RETURNING batch_id"
+            cursor = conn.execute(
+                insert_query,
                 (medicine_id, batch_number, mfg_date, exp_date,
                  purchase_date, qty_received, qty_received,
                  purchase_price, selling_price, supplier.strip(), notes.strip()),
             )
-            batch_id = cursor.lastrowid
+            batch_id = cursor.fetchone()['batch_id'] if self.db._postgres else cursor.lastrowid
 
             conn.execute(
                 """INSERT INTO stock_transactions

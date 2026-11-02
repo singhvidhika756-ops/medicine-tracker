@@ -65,16 +65,14 @@ class MedicineService:
         if min_stock_threshold < 0:
             raise ValueError("Minimum stock threshold cannot be negative.")
 
-        cursor = self.db.execute(
-            """INSERT INTO medicines
+        query = """INSERT INTO medicines
                (name, generic_name, category, manufacturer,
                 description, unit_type, min_stock_threshold)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (name.strip(), generic_name.strip(), category.strip(),
-             manufacturer.strip(), description.strip(), unit_type.strip(),
-             min_stock_threshold),
-        )
-        medicine_id = cursor.lastrowid
+               VALUES (?, ?, ?, ?, ?, ?, ?)"""
+        if self.db._postgres:
+            query += " RETURNING medicine_id"
+        cursor = self.db.execute(query, (name.strip(), generic_name.strip(), category.strip(), manufacturer.strip(), description.strip(), unit_type.strip(), min_stock_threshold))
+        medicine_id = cursor.fetchone()['medicine_id'] if self.db._postgres else cursor.lastrowid
         logger.info("Added medicine id=%d name='%s'", medicine_id, name.strip())
         return medicine_id
 

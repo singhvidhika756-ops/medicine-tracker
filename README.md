@@ -224,6 +224,19 @@ The Vercel demo uses a temporary SQLite file in `/tmp`; use a hosted PostgreSQL 
 for permanent online data. Vercel is configured to seed the sample inventory when that
 temporary database is empty, so the public demo starts with example records.
 
+### 1e. Connect permanent Supabase storage
+
+The project supports PostgreSQL through the `DATABASE_URL` environment variable. To make
+medicine additions permanent on Vercel:
+1. Create a Supabase PostgreSQL project.
+2. Copy its Session Pooler connection string.
+3. In Vercel, open **Project Settings -> Environment Variables**.
+4. Add `DATABASE_URL` for Production, Preview, and Development.
+5. Redeploy the project.
+
+When `DATABASE_URL` exists, the same service layer creates the PostgreSQL schema and uses
+it instead of temporary SQLite. Do not commit the connection string or place it in source code.
+
 ### 2. Populate Sample Data (For Demo)
 If you want to immediately explore the system with realistic data:
 ```powershell
